@@ -1,23 +1,26 @@
 project_id = "recorrencia"
 
+# JWT gateway desabilitado por compatibilidade com JWT Signing Keys assimétricas (ES256)
+# A validação do bearer token é feita dentro de cada função autenticada via
+# supabase.auth.getUser(token) usando SUPABASE_SERVICE_ROLE_KEY.
 [functions.admin_create_invite]
-verify_jwt = true
+verify_jwt = false
 [functions.admin_revoke_invite]
-verify_jwt = true
+verify_jwt = false
 [functions.admin_set_member_role]
-verify_jwt = true
+verify_jwt = false
 [functions.admin_set_member_status]
-verify_jwt = true
+verify_jwt = false
 [functions.admin_moderate_content]
-verify_jwt = true
+verify_jwt = false
 [functions.consume_invite_and_join]
-verify_jwt = true
+verify_jwt = false
 [functions.inkosi_emit_manual]
-verify_jwt = true
+verify_jwt = false
 [functions.presence_heartbeat]
-verify_jwt = true
+verify_jwt = false
 [functions.inkosi_check_presence_milestones]
-verify_jwt = true
+verify_jwt = false
 [functions.inkosi_random_cron]
 verify_jwt = false
 [functions.inkosi_cleanup]

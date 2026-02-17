@@ -3,4 +3,5 @@ abstract class AuthRepository {
   Future<void> signInWithGoogle();
   Future<void> signOut();
   Future<void> consumeInvite(String token);
+  bool get isAuthenticated;
 }

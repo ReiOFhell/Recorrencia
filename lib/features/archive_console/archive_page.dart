@@ -8,7 +8,13 @@ class ArchivePage extends ConsumerWidget {
   const ArchivePage({super.key});
 
   Future<void> _emitInkosi(WidgetRef ref) async {
-    await ref.read(supabaseClientProvider).functions.invoke('inkosi_emit_manual', body: {'style': 'rupture_frame', 'intensity': 'low'});
+    final client = ref.read(supabaseClientProvider);
+    final token = client.auth.currentSession?.accessToken;
+    await client.functions.invoke(
+      'inkosi_emit_manual',
+      body: {'style': 'rupture_frame', 'intensity': 'low'},
+      headers: token == null ? null : {'Authorization': 'Bearer $token'},
+    );
   }
 
   @override

@@ -7,10 +7,25 @@ class AuthRepositoryImpl implements AuthRepository {
 
   final SupabaseClient client;
 
+  Map<String, String> _authHeaders() {
+    final token = client.auth.currentSession?.accessToken;
+    if (token == null || token.isEmpty) {
+      throw const AuthException('Sessão ausente. Faça login antes de consumir convite.');
+    }
+    return {'Authorization': 'Bearer $token'};
+  }
+
   @override
   Future<void> consumeInvite(String token) async {
-    await client.functions.invoke('consume_invite_and_join', body: {'token': token});
+    await client.functions.invoke(
+      'consume_invite_and_join',
+      body: {'token': token},
+      headers: _authHeaders(),
+    );
   }
+
+  @override
+  bool get isAuthenticated => client.auth.currentSession?.accessToken != null;
 
   @override
   Future<void> signInWithEmail(String email, String password) async {
