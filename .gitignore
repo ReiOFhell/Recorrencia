@@ -3,9 +3,23 @@
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
+.metadata
 
 # Android
 android/.gradle/
 android/local.properties
 *.keystore
 *.jks
+
+# IDE
+.idea/
+*.iml
+
+# Supabase
+.supabase/
+.env
+.env.*
+
+# Temporary / test files
+body.json
+login.json
