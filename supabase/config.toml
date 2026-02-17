@@ -1,0 +1,27 @@
+project_id = "recorrencia"
+
+[functions.admin_create_invite]
+verify_jwt = true
+[functions.admin_revoke_invite]
+verify_jwt = true
+[functions.admin_set_member_role]
+verify_jwt = true
+[functions.admin_set_member_status]
+verify_jwt = true
+[functions.admin_moderate_content]
+verify_jwt = true
+[functions.consume_invite_and_join]
+verify_jwt = true
+[functions.inkosi_emit_manual]
+verify_jwt = true
+[functions.presence_heartbeat]
+verify_jwt = true
+[functions.inkosi_check_presence_milestones]
+verify_jwt = true
+[functions.inkosi_random_cron]
+verify_jwt = false
+[functions.inkosi_cleanup]
+verify_jwt = false
+[functions.bootstrap]
+verify_jwt = false
+
