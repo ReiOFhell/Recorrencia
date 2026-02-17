@@ -13,7 +13,6 @@ class SignInPage extends ConsumerStatefulWidget {
 }
 
 class _SignInPageState extends ConsumerState<SignInPage> {
-  final inviteCtrl = TextEditingController();
   final emailCtrl = TextEditingController();
   final passCtrl = TextEditingController();
   bool loading = false;
@@ -28,12 +27,27 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     final repo = ref.read(authRepositoryProvider);
     try {
       await repo.signInWithEmail(emailCtrl.text.trim(), passCtrl.text);
-      await repo.consumeInvite(inviteCtrl.text.trim());
-      if (mounted) context.go('/onboarding');
+      if (mounted) context.go('/ensure-membership');
     } catch (e) {
-      if (mounted) {
-        setState(() => errorMessage = e.toString());
-      }
+      if (mounted) setState(() => errorMessage = e.toString());
+    } finally {
+      if (mounted) setState(() => loading = false);
+    }
+  }
+
+
+  Future<void> _createAccount() async {
+    setState(() {
+      loading = true;
+      errorMessage = null;
+    });
+
+    final repo = ref.read(authRepositoryProvider);
+    try {
+      await repo.signUpWithEmail(emailCtrl.text.trim(), passCtrl.text);
+      if (mounted) context.go('/ensure-membership');
+    } catch (e) {
+      if (mounted) setState(() => errorMessage = e.toString());
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -54,7 +68,6 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                 const SizedBox(height: 8),
                 const Text(AppStrings.motto),
                 const SizedBox(height: 20),
-                TextField(controller: inviteCtrl, decoration: const InputDecoration(labelText: 'Convite')),
                 TextField(controller: emailCtrl, decoration: const InputDecoration(labelText: 'Email')),
                 TextField(controller: passCtrl, obscureText: true, decoration: const InputDecoration(labelText: 'Senha')),
                 const SizedBox(height: 12),
@@ -64,6 +77,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                     child: Text(errorMessage!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
                   ),
                 FilledButton(onPressed: loading ? null : _continueEmail, child: const Text('Entrar com email')),
+                OutlinedButton(onPressed: loading ? null : _createAccount, child: const Text('Criar conta')),
                 TextButton(
                   onPressed: loading ? null : () => ref.read(authRepositoryProvider).signInWithGoogle(),
                   child: const Text('Entrar com Google'),

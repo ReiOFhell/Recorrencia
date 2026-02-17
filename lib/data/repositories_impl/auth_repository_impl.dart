@@ -10,18 +10,22 @@ class AuthRepositoryImpl implements AuthRepository {
   Map<String, String> _authHeaders() {
     final token = client.auth.currentSession?.accessToken;
     if (token == null || token.isEmpty) {
-      throw const AuthException('Sessão ausente. Faça login antes de consumir convite.');
+      throw const AuthException('Sessão ausente. Faça login novamente.');
     }
     return {'Authorization': 'Bearer $token'};
   }
 
   @override
-  Future<void> consumeInvite(String token) async {
-    await client.functions.invoke(
-      'consume_invite_and_join',
-      body: {'token': token},
+  Future<Map<String, dynamic>> ensureMembership({String? displayName, String? avatarUrl}) async {
+    final response = await client.functions.invoke(
+      'ensure_membership',
+      body: {
+        if (displayName != null) 'display_name': displayName,
+        if (avatarUrl != null) 'avatar_url': avatarUrl,
+      },
       headers: _authHeaders(),
     );
+    return Map<String, dynamic>.from(response.data as Map);
   }
 
   @override
@@ -30,6 +34,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signInWithEmail(String email, String password) async {
     await client.auth.signInWithPassword(email: email, password: password);
+  }
+
+  @override
+  Future<void> signUpWithEmail(String email, String password) async {
+    await client.auth.signUp(email: email, password: password);
   }
 
   @override

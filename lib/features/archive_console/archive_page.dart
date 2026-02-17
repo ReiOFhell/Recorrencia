@@ -19,15 +19,33 @@ class ArchivePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final roleAsync = ref.watch(currentRoleProvider);
+
     return AppScaffold(
       title: 'Arquivo',
-      child: ListView(
-        children: [
-          const ListTile(title: Text('Notificações in-app')),
-          const Divider(),
-          const ListTile(title: Text('Console do Líder'), subtitle: Text('Dashboard, usuários, convites, conteúdo e auditoria.')),
-          FilledButton(onPressed: () => _emitInkosi(ref), child: const Text('Emitir Inkosi global (leader)')),
-        ],
+      child: roleAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, __) => const Text('Erro ao carregar perfil de acesso.'),
+        data: (role) {
+          final isLeader = role == 'leader';
+          return ListView(
+            children: [
+              const ListTile(title: Text('Notificações in-app')),
+              const Divider(),
+              if (isLeader) ...[
+                const ListTile(
+                  title: Text('Console do Líder'),
+                  subtitle: Text('Dashboard, usuários, convites, conteúdo e auditoria.'),
+                ),
+                FilledButton(onPressed: () => _emitInkosi(ref), child: const Text('Emitir Inkosi global (leader)')),
+              ] else
+                const ListTile(
+                  title: Text('Console do Líder'),
+                  subtitle: Text('Disponível apenas para membros com papel leader.'),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

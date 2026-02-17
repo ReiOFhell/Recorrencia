@@ -41,7 +41,12 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             ),
             const Spacer(),
             FilledButton(
-              onPressed: consent ? () => context.go('/feed') : null,
+              onPressed: consent
+                      ? () {
+                          final isAuth = ref.read(authRepositoryProvider).isAuthenticated;
+                          context.go(isAuth ? '/ensure-membership' : '/sign-in');
+                        }
+                      : null,
               child: const Text('Continuar'),
             ),
           ],

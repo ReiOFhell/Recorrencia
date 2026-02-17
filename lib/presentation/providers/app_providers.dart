@@ -14,6 +14,26 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(ref.read(supabaseClientProvider));
 });
 
+final authStateChangesProvider = StreamProvider<AuthState>((ref) {
+  return ref.read(supabaseClientProvider).auth.onAuthStateChange;
+});
+
+final membershipReadyProvider = StateProvider<bool>((_) => false);
+
+final currentRoleProvider = FutureProvider<String?>((ref) async {
+  if (!ref.watch(membershipReadyProvider)) return null;
+  final client = ref.read(supabaseClientProvider);
+  final uid = client.auth.currentUser?.id;
+  if (uid == null) return null;
+  final row = await client
+      .from('guild_members')
+      .select('role')
+      .eq('user_id', uid)
+      .eq('status', 'active')
+      .maybeSingle();
+  return row?['role'] as String?;
+});
+
 final appRouterProvider = Provider<GoRouter>((ref) => buildRouter(ref));
 
 final inkosiEffectsProvider = Provider<InkosiEffectsService>((_) => InkosiEffectsService());

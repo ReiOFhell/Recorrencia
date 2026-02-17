@@ -15,6 +15,8 @@ verify_jwt = false
 verify_jwt = false
 [functions.consume_invite_and_join]
 verify_jwt = false
+[functions.ensure_membership]
+verify_jwt = false
 [functions.inkosi_emit_manual]
 verify_jwt = false
 [functions.presence_heartbeat]
