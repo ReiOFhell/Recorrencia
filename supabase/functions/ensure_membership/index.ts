@@ -36,17 +36,25 @@ serve(async (req) => {
 
     if (guildErr || !guild) throw guildErr ?? new Error('Guild not available')
 
+    const { data: existingMembership } = await admin
+      .from('guild_members')
+      .select('*')
+      .eq('guild_id', guild.id)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
     const { data: leaderRows, error: leaderErr } = await admin
       .from('guild_members')
-      .select('id', { count: 'exact', head: false })
+      .select('id')
       .eq('guild_id', guild.id)
       .eq('role', 'leader')
       .eq('status', 'active')
 
     if (leaderErr) throw leaderErr
+
     const hasLeader = (leaderRows?.length ?? 0) > 0
-    const isFirstLeader = !hasLeader
-    const role = isFirstLeader ? 'leader' : 'observer'
+    const isFirstLeader = !hasLeader && !existingMembership
+    const role = existingMembership?.role ?? (isFirstLeader ? 'leader' : 'observer')
 
     const { data: membership, error: memberError } = await admin
       .from('guild_members')

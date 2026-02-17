@@ -30,6 +30,7 @@ GoRouter buildRouter(Ref ref) {
 
       if (!isAuthenticated) {
         ref.read(membershipReadyProvider.notifier).state = false;
+        ref.read(membershipDataProvider.notifier).state = null;
         if (path == '/onboarding' || path == '/sign-in') return null;
         return '/onboarding';
       }

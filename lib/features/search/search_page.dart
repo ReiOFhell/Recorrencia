@@ -23,7 +23,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    final data = ref.watch(globalSearchProvider(ctrl.text.trim()));
+    final query = ctrl.text.trim();
+    final data = ref.watch(globalSearchProvider(query));
     return AppScaffold(
       title: 'Busca',
       child: Column(
@@ -31,11 +32,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
           TextField(controller: ctrl, onChanged: (_) => setState(() {}), decoration: const InputDecoration(labelText: 'Buscar em tudo')),
           const SizedBox(height: 16),
           Expanded(
-            child: data.when(
-              data: (rows) => ListView(children: rows.map((r) => ListTile(title: Text(r['title'] ?? ''), subtitle: Text(r['type'] ?? ''))).toList()),
-              error: (_, __) => const Text('Erro na busca'),
-              loading: () => const Center(child: CircularProgressIndicator()),
-            ),
+            child: query.isEmpty
+                ? const Center(child: Text('Digite algo para pesquisar em posts, tópicos e dossiês.'))
+                : data.when(
+                    data: (rows) => rows.isEmpty
+                        ? const Center(child: Text('Nenhum resultado encontrado.'))
+                        : ListView(children: rows.map((r) => ListTile(title: Text(r['title'] ?? ''), subtitle: Text(r['type'] ?? ''))).toList()),
+                    error: (e, __) => Text('Erro na busca: $e'),
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                  ),
           ),
         ],
       ),

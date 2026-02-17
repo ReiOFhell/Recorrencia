@@ -1,9 +1,20 @@
 import { serve } from 'https://deno.land/std/http/server.ts'
 import { audit, errorResponse, getAdminClient, getCaller, requireRole } from '../_shared/auth.ts'
 
+const ALLOWED_TABLES = new Set([
+  'posts',
+  'forum_topics',
+  'forum_replies',
+  'dossiers',
+  'post_comments',
+  'dossier_comments',
+])
+
 serve(async (req) => {
   try {
     const { guild_id, table, id, patch } = await req.json()
+    if (!ALLOWED_TABLES.has(table)) throw new Error('table not allowed')
+
     const admin = getAdminClient()
     const { user } = await getCaller(req)
 

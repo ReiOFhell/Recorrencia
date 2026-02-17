@@ -13,6 +13,10 @@ verify_jwt = false
 verify_jwt = false
 [functions.admin_moderate_content]
 verify_jwt = false
+[functions.admin_seed_defaults]
+verify_jwt = false
+[functions.admin_list_members]
+verify_jwt = false
 [functions.consume_invite_and_join]
 verify_jwt = false
 [functions.ensure_membership]

@@ -22,12 +22,13 @@ class _EnsureMembershipPageState extends ConsumerState<EnsureMembershipPage> {
 
   Future<void> _ensureMembership() async {
     try {
-      await ref.read(authRepositoryProvider).ensureMembership();
+      final result = await ref.read(authRepositoryProvider).ensureMembership();
+      ref.read(membershipDataProvider.notifier).state = Map<String, dynamic>.from(result['membership'] as Map);
       ref.read(membershipReadyProvider.notifier).state = true;
       if (mounted) context.go('/feed');
     } catch (e) {
       if (mounted) {
-        setState(() => error = e.toString());
+        setState(() => error = 'Falha ao preparar acesso: $e');
       }
     }
   }
